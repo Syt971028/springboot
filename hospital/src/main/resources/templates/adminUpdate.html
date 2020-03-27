@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>update</title>
+</head>
+<body>
+<form th:action="@{/UserUpdate}" method="post">
+    <table>
+        <tr>
+            <td>用户名</td>
+            <td>权限</td>
+        </tr>
+        <tr th:each="user:${userById}">
+            <td hidden><input hidden id="id" name="id" th:value="${user.getId()}"/></td>
+            <td th:text="${user.getUsername()}"></td>
+            <td><select id="userType" name="userType">
+                <option value="admin">admin</option>
+                <option value="patient">patient</option>
+                <option value="doctor">doctor</option>
+            </select></td>
+        </tr>
+    </table>
+    <input type="submit" value="保存"/>
+</form>
+
+</body>
+</html>

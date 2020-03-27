@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>personal</title>
+</head>
+<body>
+<form th:action="@{/savePerson}" method="post">
+    姓名<input type="text" name="pname" id="pname" required/><br>
+    性别<select id="psex" name="psex">
+    <option value="男">男</option>
+    <option value="女">女</option>
+</select>
+    用户类型<select id="userType" name="userType">
+    <option value="doctor">医生</option>
+    <option value="patient">患者</option>
+</select>
+    科室<select id="department" name="department">
+    <option value="null">无</option>
+    <option th:each="departs:${depart}" th:text="${departs.getDepartname()}"
+            th:value="${departs.getDepartname()}"></option>
+</select>
+    手机<input type="text" name="phone" id="phone" required/><br>
+    <input hidden name="username" id="username" th:value="${username}">
+    <h3>如果是患者不用选科室</h3>
+    <input type="submit" value="保存"/>
+</form>
+</body>
+</html>

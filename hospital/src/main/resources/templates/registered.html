@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+</head>
+<script src="jquery-3.4.1.js"></script>
+<script type="text/javascript">
+    function user() {
+        $.post({
+            url: "[[@{/isregister}]]",
+            data: {"username": $("#username").val()},
+            success: function (data) {
+                if (data.toString() == 'false') {
+                    alert("用户名已存在！");
+                }
+
+            }
+        })
+    }
+</script>
+<body>
+<form th:action="@{/register}" method="post">
+    用户名：<input type="text" id="username" name="username" onblur="user()" required/>
+    <span style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></span><br>
+    密码：<input type="password" id="password" name="password" required/><br>
+    确认密码：<input type="password" id="repassword" name="repassword" required/><br>
+    <input type="submit" value="注册">
+</form>
+
+</body>
+</html>
