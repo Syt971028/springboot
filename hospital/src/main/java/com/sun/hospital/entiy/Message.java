@@ -73,4 +73,6 @@ public class Message {
     public void setOnlineCount(int onlineCount) {
         this.onlineCount = onlineCount;
     }
+
+
 }

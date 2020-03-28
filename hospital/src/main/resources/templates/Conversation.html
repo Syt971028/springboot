@@ -71,7 +71,7 @@
     </div>
 </div>
 
-<script th:inline="javascript">
+<script th:inline="javascript" charset="UTF-8">
 
     /**
      * WebSocket客户端
@@ -82,11 +82,11 @@
      */
     function getWebSocket() {
         var username = [[${username}]];
-
+        var pname = [[${pname}]];
         /**
          * WebSocket客户端 PS：URL开头表示WebSocket协议 中间是域名端口 结尾是服务端映射地址
          */
-        var webSocket = new WebSocket('ws://'+window.location.host+'/hospital/talk/'+username);
+        var webSocket = new WebSocket('ws://'+window.location.host+'/hospital/talk/'+username+'/'+pname);
         /**
          * 当服务端打开连接
          */

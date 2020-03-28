@@ -3,43 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>doctor</title>
-    <script src="jquery-3.4.1.js"></script>
-    <script type="text/javascript">
-        var websocket = null;
-        window.onload=function(){
+    <script src="../static/jquery-3.4.1.js"></script>
 
-            if('WebSocket' in window){
-                websocket = new WebSocket("ws://localhost:8080/webscoketProject/test/001");
-            }else{
-                alert('当前浏览器 Not support websocket')
-            }
-            websocket.onopen = function () {
-                alert("webscoket连接成功!");
-            }
-            websocket.onmessage=function(event){
-                $("#content").append("<div>user2:"+event.data+"</div>");
-            }
-        }
-        function sendText(){
-            var value=document.getElementById("client").value;
-            $("#content").append("<div>user1:"+value+"</div>");
-            websocket.send(value);
-        }
-        function leave(){
-            websocket.close();
-        }
-
-
-    </script>
 
 </head>
 <body>
-<a th:href="@{/Conversation/}+${username}">talk</a>
-<input type="text" id="client">
-<button onclick="sendText()">发送</button>||<button onclick="leave()">关闭</button>
-<div id="content">
+<a th:href="@{/findPatient/}+${username}">查询患者</a><br>
 
-</div>
+<table>
+    <tr>
+        <td>患者名字</td>
+        <td>操作</td>
+    </tr>
+    <tr th:each="personal:${patients}">
+        <td th:text="${personal.getPname()}"></td>
+        <td><a th:href="@{/talk(username=${username},panme=${personal.getUsername()})}">对话</a></td>
+    </tr>
+</table>
+
+
+
 
 </body>
 </html>

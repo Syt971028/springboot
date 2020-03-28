@@ -26,7 +26,7 @@ public class UserController {
     @Resource
     private DepartmentService departmentService;
 
-    @RequestMapping("/login")
+    @RequestMapping("/userLogin")
     public String login(User user, Model model) {
         if (userService.login(user)) {
             if (userService.type(user).getUserType().equals(EnumUser.admin.name())) {

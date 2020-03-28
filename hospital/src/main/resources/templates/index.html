@@ -5,7 +5,7 @@
     <title>login</title>
 </head>
 <body>
-<form th:action="@{/login}" method="post">
+<form th:action="@{/userLogin}" method="post">
     用户名：<input type="text" id="username" name="username" required/><span style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></span><br>
     密码：<input type="password" id="password" name="password" required/><br>
     <input type="submit" value="登入">

@@ -3,17 +3,15 @@ package com.sun.hospital.server;
 import com.alibaba.fastjson.JSON;
 import com.sun.hospital.entiy.Message;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 
-@ServerEndpoint(value = "/talk/{username}")
+@ServerEndpoint(value = "/talk/{username}/{pname}")
 @Component
 public class MyServer {
 
@@ -28,11 +26,11 @@ public class MyServer {
      * 当客户端打开连接：1.添加会话对象 2.更新在线人数
      */
     @OnOpen
-    public void onOpen(Session session,@PathParam(value = "username") String username) {
-        match.put(session.getId(),username);
+    public void onOpen(Session session,@PathParam(value = "username") String username,@PathParam(value = "pname") String pname) {
+        System.out.println(session.getId()+username);
+        match.put(username,session.getId());
         onlineSessions.put(session.getId(), session);
-        sendMessageToAll(Message.jsonStr(Message.ENTER, "", "", onlineSessions.size()));
-        System.out.println(username+"会话开启成功");
+        sendMessageTo(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()),pname,username);
     }
 
     /**
@@ -41,25 +39,22 @@ public class MyServer {
      * PS: 这里约定传递的消息为JSON字符串 方便传递更多参数！
      */
     @OnMessage
-    public void onMessage(String jsonStr) {
+    public void onMessage(String jsonStr,@PathParam(value = "pname") String pname,
+                          @PathParam(value = "username") String username) {
+        System.out.println(pname);
         Message message = JSON.parseObject(jsonStr, Message.class);
-        match.forEach((id,name) ->{
-            if(name.equals(message.getUsername())){
-                onlineSessions.get(id).getAsyncRemote().sendText(Message.jsonStr(Message.SPEAK, message.getUsername(), message.getMsg(), onlineSessions.size()));
-            }
-        });
-        System.out.println("发送消息");
+        sendMessageTo(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()),pname,username);
+
     }
 
     /**
      * 当关闭连接：1.移除会话对象 2.更新在线人数
      */
     @OnClose
-    public void onClose(Session session,@PathParam(value = "username") String username) {
-        match.remove(username);
+    public void onClose(Session session,@PathParam(value = "pname") String pname,@PathParam(value = "username") String username) {
+        match.remove(pname);
         onlineSessions.remove(session.getId());
-        sendMessageToAll(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()));
-        System.out.println(username+"会话关闭");
+        sendMessageTo(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()),pname,username);
     }
 
     /**
@@ -73,13 +68,18 @@ public class MyServer {
     /**
      * 公共方法：发送信息给所有人
      */
-    private static void sendMessageToAll(String msg) {
-        onlineSessions.forEach((id, session) -> {
-            try {
-                session.getBasicRemote().sendText(msg);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private static void sendMessageTo(String msg,@PathParam(value = "pname") String pname,
+                                         @PathParam(value = "username") String username) {
+        match.forEach((name,id) ->{
+            if(name.equals(pname)){
+                onlineSessions.get(id).getAsyncRemote()
+                        .sendText(msg);
             }
+            if(name.equals(username)){
+                onlineSessions.get(id).getAsyncRemote()
+                        .sendText(msg);
+            }
+
         });
     }
 

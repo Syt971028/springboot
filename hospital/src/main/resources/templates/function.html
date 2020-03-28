@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>function</title>
-    <script src="jquery-3.4.1.js"></script>
 
 
 </head>
@@ -11,6 +10,7 @@
 
 
 <a th:href="@{/findAllDoctor/}+${username}">查询医生</a>
+
 <table>
     <tr>
         <td>名字</td>
@@ -21,7 +21,7 @@
     <tr th:each="person:${Doctor}">
         <td th:text="${person.getPname()}"></td>
         <td th:text="${person.getDepartment()}"></td>
-        <td><a th:href="@{/Conversation/}+${username}">选择</a></td>
+        <td><a th:href="@{/talk(username=${username},panme=${person.getUsername()})}">对话</a></td>
     </tr>
 </table>
 
