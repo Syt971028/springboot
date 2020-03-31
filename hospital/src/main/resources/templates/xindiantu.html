@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>心率</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width">
+    <link rel="stylesheet" th:href="@{/webjars/mdui/dist/css/mdui.css}">
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/mdui/dist/js/mdui.js}"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.7.1/echarts.js"></script>
+    <script src="js/echarts.js"></script>
+    <script src="jquery-3.4.1.js"></script>
+</head>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink" onload="tu()">
+
+<div class="mdui-container">
+    <div class="mdui-toolbar mdui-color-theme">
+        <a class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">menu</i></a>
+        <span class="mdui-typo-title">心率</span>
+        <div class="mdui-toolbar-spacer"></div>
+
+        <a class="mdui-btn mdui-btn-icon" th:href="@{/}"><i
+                class="mdui-icon material-icons">exit_to_app</i></a>
+
+    </div>
+</div>
+<span id="xin" hidden="hidden"></span>
+
+<div id="main" style="height:300px;"></div>
+
+<script type="text/javascript" th:inline="javascript" >
+    var xindian=$('#xin').html();
+    const webSocket = getWebSocket();
+    function tu() {
+        console.log("xindian"+xindian);
+        const myChart = echarts.init(document.getElementById('main'));
+        const date = [];
+        const randomData = [];
+        for(let i = 0; i<50; i++){
+            date.push(  i+1);
+            randomData.push(Math.random()*1000);
+        }
+        // 指定图表的配置项和数据
+        const option = {
+            xAxis: {
+                type: 'category',
+                data: date
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: randomData,
+                type: 'line'
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        let len = date.length;
+        setInterval(function(){
+            randomData.push(Math.random()*1000);
+            randomData.shift();
+            date.push(len++);
+            date.shift();
+            myChart.setOption({
+                xAxis: {
+                    data: date
+                },
+                series: [{
+                    data: randomData
+                }]
+            });
+        }, 1000);
+    }
+
+    /**
+     * WebSocket客户端
+     *
+     * 使用说明：
+     * 1、WebSocket客户端通过回调函数来接收服务端消息。例如：webSocket.onmessage
+     * 2、WebSocket客户端通过send方法来发送消息给服务端。例如：webSocket.send();
+     */
+    function getWebSocket() {
+        const username = [[${username}]];
+
+        /**
+         * WebSocket客户端 PS：URL开头表示WebSocket协议 中间是域名端口 结尾是服务端映射地址
+         */
+        const webSocket = new WebSocket('ws://' + window.location.host + '/hospital/Rxtx/'+username);
+        /**
+         * 当服务端打开连接
+         */
+        webSocket.onopen = function () {
+            console.log('WebSocket打开连接');
+        };
+
+        /**
+         * 当服务端发来消息：1.广播消息 2.更新在线人数
+         */
+        webSocket.onmessage = function (event) {
+           // console.log('WebSocket收到消息：%c' + event.data, 'color:green');
+            //console.log(event.data);
+
+            //获取服务端消息
+           var message=JSON.parse(event.data);
+           var ShuJu=message.toString();
+            $('#xin').html(ShuJu);
+
+
+        };
+
+        /**
+         * 关闭连接
+         */
+        webSocket.onclose = function () {
+            console.log('WebSocket关闭连接');
+        };
+
+        /**
+         * 通信失败
+         */
+        webSocket.onerror = function () {
+            console.log('WebSocket发生异常');
+
+        };
+        return webSocket;
+    }
+
+</script>
+
+</body>
+</html>
+
+
+

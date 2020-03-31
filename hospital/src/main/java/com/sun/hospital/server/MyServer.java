@@ -30,7 +30,7 @@ public class MyServer {
         System.out.println(session.getId()+username);
         match.put(username,session.getId());
         onlineSessions.put(session.getId(), session);
-        sendMessageTo(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()),pname,username);
+        sendMessageTo(Message.jsonStr(Message.ENTER, "", "", onlineSessions.size()),pname,username);
     }
 
     /**
@@ -43,7 +43,7 @@ public class MyServer {
                           @PathParam(value = "username") String username) {
         System.out.println(pname);
         Message message = JSON.parseObject(jsonStr, Message.class);
-        sendMessageTo(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()),pname,username);
+        sendMessageTo(Message.jsonStr(Message.SPEAK, message.getUsername(), message.getMsg(), onlineSessions.size()),pname,username);
 
     }
 
@@ -52,7 +52,7 @@ public class MyServer {
      */
     @OnClose
     public void onClose(Session session,@PathParam(value = "pname") String pname,@PathParam(value = "username") String username) {
-        match.remove(pname);
+        match.remove(username);
         onlineSessions.remove(session.getId());
         sendMessageTo(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()),pname,username);
     }
@@ -65,9 +65,7 @@ public class MyServer {
         error.printStackTrace();
     }
 
-    /**
-     * 公共方法：发送信息给所有人
-     */
+
     private static void sendMessageTo(String msg,@PathParam(value = "pname") String pname,
                                          @PathParam(value = "username") String username) {
         match.forEach((name,id) ->{

@@ -23,7 +23,8 @@
         <td th:text="${person.getDepartment()}"></td>
         <td><a th:href="@{/talk(username=${username},panme=${person.getUsername()})}">对话</a></td>
     </tr>
-</table>
-
+</table><br>
+<a th:href="@{/findxindiantu(username=${username})}">查看心电图</a>
+<a th:href="@{/ecg}">心电图</a>
 </body>
 </html>

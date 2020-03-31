@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author 孙耘田
@@ -28,6 +33,7 @@ public class UserController {
 
     @RequestMapping("/userLogin")
     public String login(User user, Model model) {
+
         if (userService.login(user)) {
             if (userService.type(user).getUserType().equals(EnumUser.admin.name())) {
                 model.addAttribute("username",user.getUsername());
@@ -39,11 +45,11 @@ public class UserController {
                 model.addAttribute("username",user.getUsername());
                 return "function";
             }
-        } else {
-            System.out.println("fail");
-            model.addAttribute("msg", "用户名或密码错误!");
-            return "index";
+            } else {
+                model.addAttribute("msg", "用户名或密码错误!");
+                return "index";
         }
+
     }
 
     @RequestMapping("/isregister")

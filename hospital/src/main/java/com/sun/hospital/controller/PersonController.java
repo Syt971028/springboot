@@ -67,9 +67,17 @@ public class PersonController {
         mav.addObject("webSocketUrl", "ws://"+InetAddress.getLocalHost().
                 getHostAddress()+":"+request.getServerPort()+request.getContextPath()+"/Conversation/"+username+"/"+pname);
         mav.addObject("pname", pname);
-        System.out.println("ws://"+InetAddress.getLocalHost().
-                getHostAddress()+":"+request.getServerPort()+request.getContextPath()+"/Conversation/"+username+"/"+pname);
-        System.out.println("controller:"+"username="+username+"panme="+pname);
+
+        return mav;
+    }
+
+    @RequestMapping("/findxindiantu")
+    public ModelAndView conversation(HttpServletRequest request) throws UnknownHostException {
+        String username = request.getParameter("username");
+        ModelAndView mav = new ModelAndView("/xindiantu");
+        mav.addObject("username", username);
+        mav.addObject("webSocketUrl", "ws://"+InetAddress.getLocalHost().
+                getHostAddress()+":"+request.getServerPort()+request.getContextPath()+"/Rxtx/"+username);
         return mav;
     }
 
